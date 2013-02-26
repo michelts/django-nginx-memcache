@@ -64,7 +64,17 @@ Installation
         ('X-Forwarded-SSL', 'on')
     )  # values in tuples are header, value that confirms was a HTTPS request
     # the examples above are the defaults. See middleware.py
-    
+
+#. Set page version and encryptation methods:
+
+    # Set to a callable that get request and returns a string with the version.
+    # Could be used to differs logged-in and logged-out users.
+    CACHE_NGINX_PAGE_VERSION_FUNCTION = page_version_fn_callable
+
+    # Set to a callable that get the raw key string and returns it encrypted.
+    # By default, the raw key will be converted to a md5 hexdigest.
+    CACHE_NGINX_ENCRYPTATION_FUNCTION = encryptation_fn_callable
+   
 #. Setup Memcached appropriately as described in `Django's cache framework docs <http://docs.djangoproject.com/en/dev/topics/cache/#memcached>`_.
 
 #. Install Nginx with the `set_misc <https://github.com/agentzh/set-misc-nginx-module>`_ or `set_hash module <https://github.com/simpl/ngx_http_set_hash>`_. This is required to compute md5 cache keys from within Nginx. (See installing nginx below).
