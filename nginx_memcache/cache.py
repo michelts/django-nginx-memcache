@@ -15,6 +15,7 @@ CACHE_NGINX_DEFAULT_COOKIE = getattr(settings, 'CACHE_NGINX_COOKIE', 'pv')
 CACHE_TIME = getattr(settings, 'CACHE_NGINX_TIME', 3600 * 24)
 CACHE_ALIAS = getattr(settings, 'CACHE_NGINX_ALIAS', 'default')
 CACHE_MINIFY_HTML = getattr(settings, 'CACHE_MINIFY_HTML', False)
+default_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
 nginx_cache = get_cache(CACHE_ALIAS)
 
 
@@ -45,8 +46,11 @@ def cache_response(
     # get page version
     if page_version_fn:
         pv = page_version_fn(request)
+    if default_page_version_fn:
+        pv = default_page_version_fn(request)
     else:
         pv = ''
+
     cache_key = get_cache_key(
         request_host=request.get_host(),
         request_path=request.get_full_path(),
