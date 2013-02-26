@@ -17,11 +17,11 @@ class CachedPageRecord(models.Model):
     # NB: because the base_cache_key is the primary key,
     # there is no 'id' field on this model
     base_cache_key = models.CharField(
-        max_length=32,  # standard output of hexdigest() on an md5
+        max_length=255,    # even if the md5.hexdigest is 32 chars, let room for custom encryptation methods
         primary_key=True,  # which implies unique=True
         help_text=(
-            "The md5 based on the host and path. This will be " +
-            "combined with any prefix and the version to get the " +
+            "The encrypted result based on the host and path. This "
+            "will be combined with any prefix and the version to get the "
             "real cache key stored in memcache"
         )
     )
@@ -32,9 +32,9 @@ class CachedPageRecord(models.Model):
         max_length=255,
         db_index=True,
         help_text=(
-            "A 255-char identifier for whatever your parent object is." +
-            "Could be a slug, a subdomain, or a Site ID [as a string]. " +
-            "If no lookup_identifier is passed to the cache decorator, " +
+            "A 255-char identifier for whatever your parent object is."
+            "Could be a slug, a subdomain, or a Site ID [as a string]. "
+            "If no lookup_identifier is passed to the cache decorator, "
             "this value will be the hostname of the server (which is fine)."
         )
     )
@@ -44,7 +44,7 @@ class CachedPageRecord(models.Model):
         null=True,
         max_length=45,  # kept short to avoid breaking MySQL's 1000-byte index limit
         help_text=(
-            "Additional meta string you can use to scope your invalidation " +
+            "Additional meta string you can use to scope your invalidation "
             "calls to a subset of keys - eg 'news' or 'category_3'. 45 chars max."
         )
     )
