@@ -353,6 +353,12 @@ Full List of Settings
 ``CACHE_MINIFY_HTML``
   Will cache a HTML minified version of the response output. Default = False.
 
+``CACHE_NGINX_PAGE_VERSION_FUNCTION``
+  Callable that gets the request and returns a string with the request dependant page version. By default, page version will be a blank string.
+
+``CACHE_NGINX_ENCRYPTATION_FUNCTION``
+  Callable that get the raw key string and returns it encrypted. By default, the raw key will be converted to a md5 hexdigest.
+
 Contributing
 ============
 If you'd like to fix a bug, add a feature, etc

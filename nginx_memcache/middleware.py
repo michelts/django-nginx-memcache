@@ -4,6 +4,9 @@ from django.conf import settings
 
 from .cache import cache_response
 
+CACHE_NGINX_DEFAULT_COOKIE = getattr(settings, 'CACHE_NGINX_COOKIE', 'pv')
+default_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
+
 
 class UpdateCacheMiddleware(object):
     """Updates the cache cache with the response of the request.
@@ -114,4 +117,18 @@ class UpdateCacheMiddleware(object):
         )
         logging.info("Response cached")
 
+        return response
+
+
+class PageVersionCookieMiddleware(object):
+    def process_response(self, request, response):
+        """
+        Sets the page version in a cookie to let nginx compose the cache key
+        properly. If you define a custom request based page_version, you must
+        add this middleware to your list.
+        """
+        if default_page_version_fn:
+            page_version = default_page_version_fn(request)
+            response.set_cookie('pv', page_version)
+            response.set_cookie(CACHE_NGINX_DEFAULT_COOKIE, page_version)
         return response
