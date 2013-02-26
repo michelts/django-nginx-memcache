@@ -124,8 +124,11 @@ class PageVersionCookieMiddleware(object):
     def process_response(self, request, response):
         """
         Sets the page version in a cookie to let nginx compose the cache key
-        properly. If you define a custom request based page_version, you must
-        add this middleware to your list.
+        properly.
+        
+        This is done while saving the cache but, if you define a custom request
+        based page_version (depeding on user being logged-in), it is useful to
+        not cached pages update the page version (the logout view).
         """
         if default_page_version_fn:
             page_version = default_page_version_fn(request)
