@@ -15,8 +15,10 @@ CACHE_NGINX_DEFAULT_COOKIE = getattr(settings, 'CACHE_NGINX_COOKIE', 'pv')
 CACHE_TIME = getattr(settings, 'CACHE_NGINX_TIME', 3600 * 24)
 CACHE_ALIAS = getattr(settings, 'CACHE_NGINX_ALIAS', 'default')
 CACHE_MINIFY_HTML = getattr(settings, 'CACHE_MINIFY_HTML', False)
-default_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
 nginx_cache = get_cache(CACHE_ALIAS)
+
+default_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
+default_encryptation_fn = getattr(settings, 'CACHE_NGINX_ENCRYPTATION_FUNCTION', None)
 
 
 def cache_response(
@@ -95,7 +97,10 @@ def get_cache_key(
         cookie_name,
         page_version
     )
-    return hashlib.md5(raw_key).hexdigest()
+    if default_encryptation_fn:
+        return default_encryptation_fn(raw_key)
+    else:
+        return hashlib.md5(raw_key).hexdigest()
 
 
 def invalidate_from_request(
