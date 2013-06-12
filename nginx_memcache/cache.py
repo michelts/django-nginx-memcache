@@ -17,9 +17,6 @@ CACHE_ALIAS = getattr(settings, 'CACHE_NGINX_ALIAS', 'default')
 CACHE_MINIFY_HTML = getattr(settings, 'CACHE_MINIFY_HTML', False)
 nginx_cache = get_cache(CACHE_ALIAS)
 
-default_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
-default_encryptation_fn = getattr(settings, 'CACHE_NGINX_ENCRYPTATION_FUNCTION', None)
-
 
 def cache_response(
         request,
@@ -48,10 +45,12 @@ def cache_response(
     # get page version
     if page_version_fn:
         pv = page_version_fn(request)
-    if default_page_version_fn:
-        pv = default_page_version_fn(request)
     else:
-        pv = ''
+        custom_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
+        if custom_page_version_fn:
+            pv = custom_page_version_fn(request)
+        else:
+            pv = ''
 
     cache_key = get_cache_key(
         request_host=request.get_host(),
@@ -97,8 +96,10 @@ def get_cache_key(
         cookie_name,
         page_version
     )
-    if default_encryptation_fn:
-        return default_encryptation_fn(raw_key)
+
+    custom_encryptation_fn = getattr(settings, 'CACHE_NGINX_ENCRYPTATION_FUNCTION', None)
+    if custom_encryptation_fn:
+        return custom_encryptation_fn(raw_key)
     else:
         return hashlib.md5(raw_key).hexdigest()
 
