@@ -28,6 +28,55 @@ class CachePageDecoratorTests(TestCase):
 
         assert cache.get(cache_key)
 
+    def test_custom_page_version_function(self):
+        """
+        Asserts that if there is a custom version function, the returned
+        version is considered in the cache key.
+        """
+        def my_view(request):
+            return HttpResponse('content')
+
+        # monkey-patch settings to add a custom page version function
+        settings.CACHE_NGINX_PAGE_VERSION_FUNCTION = lambda request: 'custom-version'
+
+        request = self.factory.get('/')
+        cache.clear()
+        cache_key = get_cache_key(request.get_host(), request.get_full_path(), 'custom-version')
+        assert not cache.get(cache_key)
+
+        my_view_cached = cache_page_nginx(my_view)
+        self.assertEqual(my_view_cached(request).content, 'content')
+
+        assert cache.get(cache_key)
+
+        # get back to the original value to not compromise other tests
+        settings.CACHE_NGINX_PAGE_VERSION_FUNCTION = None
+
+    def test_custom_encryptation_function(self):
+        """
+        Asserts that if there is a custom encryptation function, it will be
+        used instead of the default md5.
+        """
+        def my_view(request):
+            return HttpResponse('content')
+
+        # monkey-patch settings to add a encryptation function that
+        # in this example do nothing
+        settings.CACHE_NGINX_ENCRYPTATION_FUNCTION = lambda raw_key: raw_key
+
+        request = self.factory.get('/')
+        cache.clear()
+        cache_key = get_cache_key(request.get_host(), request.get_full_path())
+        assert not cache.get(cache_key)
+
+        my_view_cached = cache_page_nginx(my_view)
+        self.assertEqual(my_view_cached(request).content, 'content')
+
+        assert cache.get(cache_key)
+
+        # get back to the original value to not compromise other tests
+        settings.CACHE_NGINX_ENCRYPTATION_FUNCTION = None
+
 
 class CachePageDecoratorHTTPSTests(TestCase):
     def setUp(self):
