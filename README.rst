@@ -168,6 +168,7 @@ Installation
                 error_page         403 = @cache_miss;
                 error_page         404 = @cache_miss;
                 error_page         405 = @cache_miss;
+                error_page         502 = @cache_miss;
 
                 # Note that it is not permitted to have a try_files in the same
                 # location block as a memcache_pass
