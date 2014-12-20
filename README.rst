@@ -33,9 +33,10 @@ Installation
         # ...
     )
 
-#. If you wish to use the DB-backed cached-page lookup (so that you know what pages may have been cached, and so may need invalidating), run `syncdb` to add the required table:
+#. If you wish to use the DB-backed cached-page lookup (so that you know what pages may have been cached, and so may need invalidating), run `migrate` to add the required table (for django versions prior 1.7, you will need to install South 1.0):
 
-    ./manage.py syncdb nginx_memcache
+    ./manage.py migrate nginx_memcache
+
 
 #. Let your app/project know about the cache-invalidation signals by importing them in a module you *know* will always be loaded (eg the `__init__.py` for your core app)
 
