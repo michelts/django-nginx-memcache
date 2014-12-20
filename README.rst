@@ -125,17 +125,11 @@ Installation
         }
 
         location @gunicorn {
-                # This is the standard config for serving Django via gunicorn                                                                                                                            
-                root /usr/local/django/demosite/;
-
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header Host $http_host;
                 proxy_redirect off;
 
-                if (!-f $request_filename) {
-                    proxy_pass http://gunicorn_demosite;
-                    break;
-                }
+	        proxy_pass http://gunicorn_demosite;
 
                 client_max_body_size 10m;
         }
@@ -184,6 +178,7 @@ Installation
                 error_page         403 = @cache_miss;
                 error_page         404 = @cache_miss;
                 error_page         405 = @cache_miss;
+                error_page         502 = @cache_miss;
 
                 # Note that it is not permitted to have a try_files in the same
                 # location block as a memcache_pass
