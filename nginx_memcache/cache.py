@@ -3,7 +3,7 @@ import logging
 import hashlib
 
 from django.conf import settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.db import IntegrityError
 from django.template.response import TemplateResponse
 from django.utils.encoding import DjangoUnicodeDecodeError
@@ -15,7 +15,7 @@ CACHE_NGINX_DEFAULT_COOKIE = getattr(settings, 'CACHE_NGINX_COOKIE', 'pv')
 CACHE_TIME = getattr(settings, 'CACHE_NGINX_TIME', 3600 * 24)
 CACHE_ALIAS = getattr(settings, 'CACHE_NGINX_ALIAS', 'default')
 CACHE_MINIFY_HTML = getattr(settings, 'CACHE_MINIFY_HTML', False)
-nginx_cache = get_cache(CACHE_ALIAS)
+nginx_cache = caches[CACHE_ALIAS]
 
 
 def cache_response(
