@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 
 from .cache import cache_response
 
@@ -8,7 +9,7 @@ CACHE_NGINX_DEFAULT_COOKIE = getattr(settings, 'CACHE_NGINX_COOKIE', 'pv')
 default_page_version_fn = getattr(settings, 'CACHE_NGINX_PAGE_VERSION_FUNCTION', None)
 
 
-class UpdateCacheMiddleware(object):
+class UpdateCacheMiddleware(MiddlewareMixin):
     """Updates the cache cache with the response of the request.
 
     It is of _paramount_ importance that the generated cache_key matches
@@ -120,12 +121,12 @@ class UpdateCacheMiddleware(object):
         return response
 
 
-class PageVersionCookieMiddleware(object):
+class PageVersionCookieMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         """
         Sets the page version in a cookie to let nginx compose the cache key
         properly.
-        
+
         This is done while saving the cache but, if you define a custom request
         based page_version (depeding on user being logged-in), it is useful to
         not cached pages update the page version (the logout view).
