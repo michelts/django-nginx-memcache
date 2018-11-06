@@ -1,3 +1,6 @@
+default_app_config = 'nginx_memcache.apps.NginxMemcacheConfig'
+
+
 VERSION = (0, 2, 4,)
 
 
@@ -17,10 +20,3 @@ def get_version():
     except IndexError:
         pass
     return version
-
-# Ensure you have the following import in your main Django app
-
-# from nginx_memcache.signals import (
-#     handle_single_page_invalidation,
-#     handle_multiple_page_invalidation
-# )
